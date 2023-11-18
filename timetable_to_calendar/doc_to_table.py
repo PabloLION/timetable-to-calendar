@@ -1,6 +1,6 @@
 from docx import Document
 
-from paths import REPO_ROOT
+from paths import EXAMPLE_DATA_FOLDER
 
 
 def extract_tables_from_docx(docx_file):
@@ -34,7 +34,7 @@ def extract_tables_from_docx(docx_file):
 
 def test():
     # Specify your docx file path
-    docx_file = REPO_ROOT / "timetable.docx"
+    docx_file = EXAMPLE_DATA_FOLDER / "timetable.docx"
 
     # Extract tables
     extracted_tables = extract_tables_from_docx(docx_file)

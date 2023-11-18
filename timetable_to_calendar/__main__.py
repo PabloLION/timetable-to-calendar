@@ -3,7 +3,7 @@ from cell_type_classifier import CellTypeClassifier
 from doc_to_table import extract_tables_from_docx
 from event_lint import merge_events
 from i_calendar import create_ics_file, ics_to_event_list
-from paths import REPO_ROOT
+from paths import EXAMPLE_DATA_FOLDER, TEST_OUTPUT_FOLDER
 from table_to_events import Event, extract_events
 
 
@@ -12,7 +12,7 @@ def app(docx_path: Path, export_ics_path: Path):
     tables = extract_tables_from_docx(docx_path)
 
     # overwrite table[1] with externally edited table_1.csv
-    with open(REPO_ROOT / "table_1.csv") as f:
+    with open(EXAMPLE_DATA_FOLDER / "manual-fix.csv") as f:
         tables[0] = [line.split(",") for line in f.read().splitlines()]
 
     # table to list[Event]
@@ -38,4 +38,7 @@ def app(docx_path: Path, export_ics_path: Path):
 
 
 if __name__ == "__main__":
-    app(REPO_ROOT / "timetable.docx", REPO_ROOT / "timetable.ics")
+    app(EXAMPLE_DATA_FOLDER / "timetable.docx", TEST_OUTPUT_FOLDER / "timetable.ics")
+
+a = "/Users/pablo/LocalDocs/repo/PabloLION/timetable-to-calendar/tests/test-output/timetable.ics"
+b = "/Users/pablo/LocalDocs/repo/PabloLION/timetable-to-calendar/test/test-output/timetable.ics"
