@@ -38,7 +38,9 @@ def app(docx_path: Path, export_ics_path: Path):
 
 
 if __name__ == "__main__":
-    app(EXAMPLE_DATA_FOLDER / "timetable.docx", TEST_OUTPUT_FOLDER / "timetable.ics")
-
-a = "/Users/pablo/LocalDocs/repo/PabloLION/timetable-to-calendar/tests/test-output/timetable.ics"
-b = "/Users/pablo/LocalDocs/repo/PabloLION/timetable-to-calendar/test/test-output/timetable.ics"
+    events = app(
+        EXAMPLE_DATA_FOLDER / "timetable.docx", TEST_OUTPUT_FOLDER / "timetable.ics"
+    )
+    print("Extracted events:")
+    for event in events:
+        print(event)

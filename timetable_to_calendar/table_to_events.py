@@ -26,7 +26,8 @@ def extract_events(table: List2D, clf: CellTypeClassifier) -> list[Event]:
             elif clf(cell_val) == CellType.EVENT_ID:
                 if not start_time or not end_time:
                     raise ValueError(f"Wrong time slot in {row=}, {ic=}, {cell_val=}")
-                event_name = EVENT_ID_TO_EVENT_NAME.get(cell_val, cell_val)
+                _event_name = EVENT_ID_TO_EVENT_NAME.get(cell_val)
+                event_name = _event_name.full if _event_name else cell_val
                 events.append(Event(date, start_time, end_time, event_name))
     events.sort(key=lambda x: x.date)
     return events
