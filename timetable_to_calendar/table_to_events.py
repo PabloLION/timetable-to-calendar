@@ -12,14 +12,6 @@ from timetable_to_calendar.hot_fix import fix_date, fix_date_range, fix_time
 List2D = list[list[str]]  # first row is date, some column is time slot
 
 
-class TimetableEvent(NamedTuple):
-    date: str
-    time_start: str  # hour if not specified
-    time_end: str
-    event_name: str
-    timezone: str = "Europe/Madrid"
-
-
 class Event(NamedTuple):
     datetime_start: datetime
     datetime_end: datetime
@@ -27,39 +19,23 @@ class Event(NamedTuple):
     event_short_name: str
 
     @staticmethod
-    def _temp(
-        date: str,
-        start_time: str,
-        end_time: str,
-        event_name: str,
-    ):
-        # todo: refactor
-        return Event.from_timetable_event(
-            TimetableEvent(date, start_time, end_time, event_name)
-        )
-
-    @staticmethod
-    def from_timetable_event(event: TimetableEvent) -> "Event":
+    def _temp(date: str, start_time: str, end_time: str, event_name: str):
         # Get the timezone
-        tz = pytz.timezone(event.timezone)
+        tz = pytz.timezone("Europe/Madrid")
 
         # Parse the date and time and make them timezone aware
-        start = event.time_start
-        end = event.time_end
-        name, date = event.event_name, event.date
+        start = fix_time(start_time)
+        end = fix_time(end_time)
+        name, date = event_name, fix_date(date)
 
         if not date:
-            raise ValueError(f"Date is empty in {event=}")
-
-        start, end, date = fix_time(start), fix_time(end), fix_date(date)
+            raise ValueError(f"Date is empty for event_name={event_name}")
 
         try:
             start_date_time = tz.localize(parse(f"{date} {start}"))
             end_date_time = tz.localize(parse(f"{date} {end}"))
-            start_date_time = fix_date_range(start_date_time)
-            end_date_time = fix_date_range(end_date_time)
         except ValueError:
-            raise ParserError(f"Error parsing datetime in {event=}")
+            raise ValueError(f"Error parsing datetime for event_name={event_name}")
 
         return Event(start_date_time, end_date_time, name, name)
 
