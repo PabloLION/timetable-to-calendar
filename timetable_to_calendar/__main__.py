@@ -42,7 +42,7 @@ def app(docx_path: Path, export_ics_path: Path):
         return events
 
     for ev, iev in zip(events, ics_events):
-        if not ev == iev:
+        if ev != iev:
             print("events not equal")
             print(ev.__repr__())
             print(iev.__repr__())

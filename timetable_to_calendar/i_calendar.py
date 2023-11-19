@@ -16,12 +16,12 @@ def create_ics_file(events: list[Event], file_path: Path):
         cal_event = iCalEvent()
 
         # Add properties to the event
-        cal_event.add("summary", event.event_short_name)
+        cal_event.add("summary", event.summary)
         cal_event.add("dtstart", event.datetime_start)
         cal_event.add("dtend", event.datetime_end)
         cal_event.add("dtstamp", datetime.now(event.datetime_start.tzinfo))
         # Timestamp should be in UTC
-        cal_event.add("description", event.event_name)
+        cal_event.add("description", event.description)
 
         # Add event to the calendar
         cal.add_component(cal_event)
@@ -58,8 +58,8 @@ def ics_to_event_list(ics_file_path) -> list[Event]:
             event = Event(
                 start,
                 end,
-                full_name,
                 short_name,
+                full_name,
             )
             events_list.append(event)
 

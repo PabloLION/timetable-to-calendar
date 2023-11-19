@@ -20,8 +20,8 @@ List2D = list[list[str]]  # first row is date, some column is time slot
 class Event(NamedTuple):
     datetime_start: datetime
     datetime_end: datetime
-    event_name: str
-    event_short_name: str
+    summary: str
+    description: str
 
     @staticmethod
     def _temp(date: str, start_time: str, end_time: str, event_id: str):
@@ -31,8 +31,6 @@ class Event(NamedTuple):
         # Parse the date and time and make them timezone aware
         start, end, date = fix_time(start_time), fix_time(end_time), fix_date(date)
         names = format_event_names(event_id, EVENT_ID_TO_EVENT_NAME)
-        full_name = names.full
-        shortened_name = names.shortened
 
         if not date:
             raise ValueError(f"Date is empty for {date=}{start_time=}{event_id=}")
@@ -45,13 +43,13 @@ class Event(NamedTuple):
                 f"Error parsing datetime for {date=}{start_time=}{event_id=}"
             )
 
-        return Event(start_date_time, end_date_time, names.full, names.shortened)
+        return Event(start_date_time, end_date_time, names.shortened, names.full)
 
     def __str__(self) -> str:
         date = self.datetime_start.strftime("%Y-%m-%d")
         start = self.datetime_start.strftime("%H:%M:%S")
         end = self.datetime_end.strftime("%H:%M:%S")
-        return f"Event({date} {start[:2]}-{end[:2]} {self.event_name})"
+        return f"Event({date} {start[:2]}-{end[:2]} {self.summary})"
 
 
 def extract_events(table: List2D, clf: CellTypeClassifier) -> list[Event]:

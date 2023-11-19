@@ -12,8 +12,8 @@ def merge_events(events: list[Event]) -> list[Event]:
     events_by_end = sorted(events, key=lambda x: (x.datetime_end))
 
     for event in events_by_end:
-        searching_key = (event.datetime_start, event.event_name)
-        new_key = (event.datetime_end, event.event_name)
+        searching_key = (event.datetime_start, event.summary)
+        new_key = (event.datetime_end, event.summary)
         if new_key in grouped_events:
             raise ValueError(
                 f"Duplicate events in {grouped_events=}: {event=} and {grouped_events[new_key]=} with key {new_key=}"
@@ -28,10 +28,10 @@ def merge_events(events: list[Event]) -> list[Event]:
     for group in grouped_events.values():
         start = group[0].datetime_start
         end = group[-1].datetime_end
-        name = group[0].event_name
-        short_name = group[0].event_short_name
+        short = group[0].summary
+        full = group[0].description
 
-        merged_events.append(Event(start, end, name, short_name))
+        merged_events.append(Event(start, end, short, full))
     return merged_events
 
 
