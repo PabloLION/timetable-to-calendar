@@ -28,6 +28,9 @@ def merge_events(events: list[Event]) -> list[Event]:
         end = group[-1].time_end
         name, date = group[0].event_name, group[0].date
 
+        if not date:
+            raise ValueError(f"Date is empty in {group=}")
+
         start, end, date = fix_time(start), fix_time(end), fix_date(date)
         merged_events.append(Event(date, start, end, name))
     return merged_events

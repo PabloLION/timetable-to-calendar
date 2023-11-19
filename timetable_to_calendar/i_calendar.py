@@ -5,6 +5,7 @@ from dateutil.parser import parse, ParserError
 import pytz
 
 from table_to_events import Event
+from hot_fix import fix_date_range
 
 
 def create_ics_file(events: list[Event], file_path: Path):
@@ -24,6 +25,10 @@ def create_ics_file(events: list[Event], file_path: Path):
         except ParserError:
             print(f"Error parsing datetime in {event.date=} {event.time_start=}")
             continue
+
+        start_date_time = fix_date_range(start_date_time)
+        end_date_time = fix_date_range(end_date_time)
+
         # Add properties to the event
         cal_event.add("summary", event.event_name)
         cal_event.add("dtstart", start_date_time)
