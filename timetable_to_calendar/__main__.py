@@ -7,7 +7,7 @@ from paths import EXAMPLE_DATA_FOLDER, TEST_OUTPUT_FOLDER
 from table_to_events import Event, extract_events
 
 
-def app(docx_path: Path, export_ics_path: Path):
+def docx_to_events(docx_path: Path) -> list[Event]:
     # doc to list[Event]
     tables = extract_tables_from_docx(docx_path)
 
@@ -26,14 +26,27 @@ def app(docx_path: Path, export_ics_path: Path):
 
     # lint_events
     events = merge_events(events)
+    return events
+
+
+def app(docx_path: Path, export_ics_path: Path):
+    events = docx_to_events(docx_path)
 
     # list[Event] to ics
     create_ics_file(events, export_ics_path)
 
-    # convert back for better format
-    events = ics_to_event_list(export_ics_path)
-    events = sorted(events, key=lambda x: (x.datetime_start))
+    # make sure the ics file is correct
+    ics_events = ics_to_event_list(export_ics_path)
+    assert len(ics_events) == len(events)
+    if events == ics_events:
+        return events
 
+    for ev, iev in zip(events, ics_events):
+        if not ev == iev:
+            print("events not equal")
+            print(ev.__repr__())
+            print(iev.__repr__())
+            print()
     return events
 
 
@@ -44,3 +57,7 @@ if __name__ == "__main__":
     print("Extracted events:")
     for event in events:
         print(event)
+        ...
+
+        # to generate filenames
+        # yymmdd = event.datetime_start.strftime("%y%m%d")

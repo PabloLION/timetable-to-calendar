@@ -16,12 +16,12 @@ def create_ics_file(events: list[Event], file_path: Path):
         cal_event = iCalEvent()
 
         # Add properties to the event
-        cal_event.add("summary", event.event_name)
+        cal_event.add("summary", event.event_short_name)
         cal_event.add("dtstart", event.datetime_start)
         cal_event.add("dtend", event.datetime_end)
-        cal_event.add(
-            "dtstamp", datetime.now(event.datetime_start.tzinfo)
-        )  # Timestamp should be in UTC
+        cal_event.add("dtstamp", datetime.now(event.datetime_start.tzinfo))
+        # Timestamp should be in UTC
+        cal_event.add("description", event.event_name)
 
         # Add event to the calendar
         cal.add_component(cal_event)
@@ -31,7 +31,7 @@ def create_ics_file(events: list[Event], file_path: Path):
         f.write(cal.to_ical())
 
 
-def ics_to_event_list(ics_file_path):
+def ics_to_event_list(ics_file_path) -> list[Event]:
     with open(ics_file_path, "rb") as ics_file:
         # Load the ICS file
         cal = Calendar.from_ical(ics_file.read())
@@ -43,7 +43,8 @@ def ics_to_event_list(ics_file_path):
             if component.name != "VEVENT":
                 continue
             # Extract event details
-            summary = str(component.get("summary"))
+            short_name = str(component.get("summary"))
+            full_name = str(component.get("description"))
             start = component.get("dtstart").dt
             end = component.get("dtend").dt
 
@@ -57,8 +58,8 @@ def ics_to_event_list(ics_file_path):
             event = Event(
                 start,
                 end,
-                summary,
-                summary,
+                full_name,
+                short_name,
             )
             events_list.append(event)
 
