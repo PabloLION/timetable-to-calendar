@@ -6,8 +6,13 @@ from paths import EXAMPLE_DATA_FOLDER
 from dateutil.parser import parse, ParserError
 
 from cell_type_classifier import CellTypeClassifier, CellType
-from constants import EVENT_ID_TO_EVENT_NAME
-from timetable_to_calendar.hot_fix import fix_date, fix_date_range, fix_time
+from timetable_to_calendar.hot_fix import (
+    fix_date,
+    fix_date_range,
+    fix_time,
+    format_event_names,
+    EVENT_ID_TO_EVENT_NAME,
+)
 
 List2D = list[list[str]]  # first row is date, some column is time slot
 
@@ -19,31 +24,34 @@ class Event(NamedTuple):
     event_short_name: str
 
     @staticmethod
-    def _temp(date: str, start_time: str, end_time: str, event_name: str):
+    def _temp(date: str, start_time: str, end_time: str, event_id: str):
         # Get the timezone
         tz = pytz.timezone("Europe/Madrid")
 
         # Parse the date and time and make them timezone aware
-        start = fix_time(start_time)
-        end = fix_time(end_time)
-        name, date = event_name, fix_date(date)
+        start, end, date = fix_time(start_time), fix_time(end_time), fix_date(date)
+        names = format_event_names(event_id, EVENT_ID_TO_EVENT_NAME)
+        full_name = names.full
+        shortened_name = names.shortened
 
         if not date:
-            raise ValueError(f"Date is empty for event_name={event_name}")
+            raise ValueError(f"Date is empty for {date=}{start_time=}{event_id=}")
 
         try:
             start_date_time = tz.localize(parse(f"{date} {start}"))
             end_date_time = tz.localize(parse(f"{date} {end}"))
         except ValueError:
-            raise ValueError(f"Error parsing datetime for event_name={event_name}")
+            raise ValueError(
+                f"Error parsing datetime for {date=}{start_time=}{event_id=}"
+            )
 
-        return Event(start_date_time, end_date_time, name, name)
+        return Event(start_date_time, end_date_time, names.full, names.shortened)
 
     def __str__(self) -> str:
         date = self.datetime_start.strftime("%Y-%m-%d")
         start = self.datetime_start.strftime("%H:%M:%S")
         end = self.datetime_end.strftime("%H:%M:%S")
-        return f"Ev({date} {start[:2]}-{end[:2]} {self.event_name})"
+        return f"Event({date} {start[:2]}-{end[:2]} {self.event_name})"
 
 
 def extract_events(table: List2D, clf: CellTypeClassifier) -> list[Event]:
@@ -57,9 +65,7 @@ def extract_events(table: List2D, clf: CellTypeClassifier) -> list[Event]:
             elif clf(cell_val) == CellType.EVENT_ID:
                 if not start_time or not end_time:
                     raise ValueError(f"Wrong time slot in {row=}, {ic=}, {cell_val=}")
-                _event_name = EVENT_ID_TO_EVENT_NAME.get(cell_val)
-                event_name = _event_name.full if _event_name else cell_val
-                events.append(Event._temp(date, start_time, end_time, event_name))
+                events.append(Event._temp(date, start_time, end_time, cell_val))
     events.sort(key=lambda x: x.datetime_start)
     return events
 

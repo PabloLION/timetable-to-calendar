@@ -53,3 +53,33 @@ def fix_date_range(date_time: datetime) -> datetime:
         )
 
     return date_time
+
+
+from typing import NamedTuple
+
+
+class EventNames(NamedTuple):
+    shortened: str
+    full: str
+
+
+EVENT_ID_TO_EVENT_NAME: dict[str, EventNames] = {
+    "1": EventNames("SAGE", "Sustainability and Green Engineering"),
+    "2": EventNames("AHPC", "Advanced High Performance Computing"),
+    "3": EventNames("DTAS", "Data Transmission and Security"),
+    "4": EventNames("CPS", "Cyberphysical Systems"),
+    "5": EventNames("DAODM", "Data Analysis, Optimization and Decision Making"),
+    "6": EventNames("ETIR", "Engineering Technology, Innovation and Research"),
+    "7": EventNames("CADM", "Cloud App Development and Management"),
+    "8": EventNames("DTAC", "Data Transmission and Cryptography"),
+    "9": EventNames("SIND", "Smart Industry"),
+    "10": EventNames("DLEA", "Deep Learning"),
+}
+
+
+def format_event_names(
+    event_id: str, event_name_dict: dict[str, EventNames]
+) -> EventNames:
+    event_id = event_id.replace("\n", " ")
+    event_name = event_name_dict.get(event_id)
+    return event_name if event_name else EventNames("SPECIAL", event_id)
