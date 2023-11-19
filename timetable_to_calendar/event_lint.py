@@ -1,7 +1,5 @@
 from datetime import datetime
-from os import name
 from table_to_events import Event
-from hot_fix import fix_date, fix_time
 
 
 def merge_events(events: list[Event]) -> list[Event]:

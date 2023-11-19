@@ -55,9 +55,15 @@ if __name__ == "__main__":
         EXAMPLE_DATA_FOLDER / "timetable.docx", TEST_OUTPUT_FOLDER / "timetable.ics"
     )
     print("Extracted events:")
+    count = 0
     for event in events:
-        print(event)
         ...
+        # print(event)
 
         # to generate filenames
-        # yymmdd = event.datetime_start.strftime("%y%m%d")
+        yymmdd = event.datetime_start.strftime("%y%m%d")
+        if event.summary == "DTAS":
+            count += 1
+            print(
+                f"{event.summary.lower()}-{count:02}-{yymmdd} , class given on 20{yymmdd} {event.datetime_start.strftime('%H%M')}-{event.datetime_end.strftime('%H%M')}"
+            )

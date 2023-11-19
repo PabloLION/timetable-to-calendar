@@ -5,7 +5,6 @@ from dateutil.parser import parse, ParserError
 import pytz
 
 from table_to_events import Event
-from hot_fix import fix_date_range
 
 
 def create_ics_file(events: list[Event], file_path: Path):

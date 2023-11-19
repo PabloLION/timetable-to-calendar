@@ -28,16 +28,18 @@ class Event(NamedTuple):
         # Get the timezone
         tz = pytz.timezone("Europe/Madrid")
 
+        if not date:
+            raise ValueError(f"Date is empty for {date=}{start_time=}{event_id=}")
+
         # Parse the date and time and make them timezone aware
         start, end, date = fix_time(start_time), fix_time(end_time), fix_date(date)
         names = format_event_names(event_id, EVENT_ID_TO_EVENT_NAME)
 
-        if not date:
-            raise ValueError(f"Date is empty for {date=}{start_time=}{event_id=}")
-
         try:
             start_date_time = tz.localize(parse(f"{date} {start}"))
             end_date_time = tz.localize(parse(f"{date} {end}"))
+            start_date_time = fix_date_range(start_date_time)
+            end_date_time = fix_date_range(end_date_time)
         except ValueError:
             raise ValueError(
                 f"Error parsing datetime for {date=}{start_time=}{event_id=}"
