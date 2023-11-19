@@ -32,7 +32,7 @@ def app(docx_path: Path, export_ics_path: Path):
 
     # convert back for better format
     events = ics_to_event_list(export_ics_path)
-    events = sorted(events, key=lambda x: (x.date, x.time_start))
+    events = sorted(events, key=lambda x: (x.datetime_start))
 
     return events
 

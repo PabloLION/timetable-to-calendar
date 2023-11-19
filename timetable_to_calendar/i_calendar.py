@@ -15,25 +15,13 @@ def create_ics_file(events: list[Event], file_path: Path):
         # Create an iCalendar event
         cal_event = iCalEvent()
 
-        # Get the timezone
-        tz = pytz.timezone(event.timezone)
-
-        # Parse the date and time and make them timezone aware
-        try:
-            start_date_time = tz.localize(parse(f"{event.date} {event.time_start}"))
-            end_date_time = tz.localize(parse(f"{event.date} {event.time_end}"))
-        except ParserError:
-            print(f"Error parsing datetime in {event.date=} {event.time_start=}")
-            continue
-
-        start_date_time = fix_date_range(start_date_time)
-        end_date_time = fix_date_range(end_date_time)
-
         # Add properties to the event
         cal_event.add("summary", event.event_name)
-        cal_event.add("dtstart", start_date_time)
-        cal_event.add("dtend", end_date_time)
-        cal_event.add("dtstamp", datetime.now(pytz.utc))  # Timestamp should be in UTC
+        cal_event.add("dtstart", event.datetime_start)
+        cal_event.add("dtend", event.datetime_end)
+        cal_event.add(
+            "dtstamp", datetime.now(event.datetime_start.tzinfo)
+        )  # Timestamp should be in UTC
 
         # Add event to the calendar
         cal.add_component(cal_event)
@@ -65,17 +53,12 @@ def ics_to_event_list(ics_file_path):
             if isinstance(end, datetime) and end.tzinfo is None:
                 end = pytz.timezone("Europe/Madrid").localize(end)
 
-            # Format date and time
-            date_str = start.strftime("%Y-%m-%d")
-            time_start_str = start.strftime("%H:%M:%S")
-            time_end_str = end.strftime("%H:%M:%S")
-
             # Create an Event object and add it to the list
             event = Event(
-                date=date_str,
-                time_start=time_start_str,
-                time_end=time_end_str,
-                event_name=summary,
+                start,
+                end,
+                summary,
+                summary,
             )
             events_list.append(event)
 
