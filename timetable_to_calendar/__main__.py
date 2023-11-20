@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 from cell_type_classifier import CellTypeClassifier
 from doc_to_table import extract_tables_from_docx
@@ -62,8 +63,20 @@ if __name__ == "__main__":
 
         # to generate filenames
         yymmdd = event.datetime_start.strftime("%y%m%d")
-        if event.summary == "DTAS":
+        start = event.datetime_start.strftime("%H%M")
+        end = event.datetime_end.strftime("%H%M")
+        duration = event.datetime_end - event.datetime_start
+        if event.summary == "DAODM":
             count += 1
-            print(
-                f"{event.summary.lower()}-{count:02}-{yymmdd} , class given on 20{yymmdd} {event.datetime_start.strftime('%H%M')}-{event.datetime_end.strftime('%H%M')}"
-            )
+            count_str = f"{count:02}"
+            if duration == timedelta(hours=4):
+                count += 1
+                count_str += f",{count:02}"
+            # print(
+            #     f"_{event.summary.lower()}-{count_str}-{yymmdd} , class given on 20{yymmdd} {event.datetime_start.strftime('%H%M')}-{event.datetime_end.strftime('%H%M')} by @"
+            # )
+            # generate a string like this:
+            # mkdir _cadm-01-240129 && echo "class given on 20240129 1700-1900 by @" > _cadm-01-240129/cadm-01.note-240129.md && mkdir _cadm-01-240129/cadm-01.files && touch _cadm-01-240129/cadm-01.files/.placeholder
+            # mkdir _cadm-01-240129 && echo "class given on 20240129 1700-1900 by @" > _cadm-01-240129/cadm-01.note-240129.md && mkdir _cadm-01-240129/cadm-01.files && touch _cadm-01-240129/cadm-01.files/.placeholder
+            # cmd = f'mkdir _{event.summary.lower()}-{count_str}-{yymmdd} && echo "class given on 20{yymmdd} {start}-{end} by @" > _{event.summary.lower()}-{count_str}-{yymmdd}/{event.summary.lower()}-{count_str}.note-{yymmdd}.md && mkdir _{event.summary.lower()}-{count_str}-{yymmdd}/{event.summary.lower()}-{count_str}.files && touch _{event.summary.lower()}-{count_str}-{yymmdd}/{event.summary.lower()}-{count_str}.files/.placeholder'
+            # print(cmd)

@@ -69,11 +69,11 @@ EVENT_ID_TO_EVENT_NAME: dict[str, EventNames] = {
     "3": EventNames("DTAS", "Data Transmission and Security"),
     "4": EventNames("CPS", "Cyberphysical Systems"),
     "5": EventNames("DAODM", "Data Analysis, Optimization and Decision Making"),
-    "6": EventNames("ETIR", "Engineering Technology, Innovation and Research"),
-    "7": EventNames("CADM", "Cloud App Development and Management"),
+    "6": EventNames("ETIAR", "Engineering Technology, Innovation and Research"),
+    "7": EventNames("CADAM", "Cloud App Development and Management"),
     "8": EventNames("DTAC", "Data Transmission and Cryptography"),
-    "9": EventNames("SIND", "Smart Industry"),
-    "10": EventNames("DLEA", "Deep Learning"),
+    "9": EventNames("SMIN", "Smart Industry"),
+    "10": EventNames("DELA", "Deep Learning"),
 }
 
 
