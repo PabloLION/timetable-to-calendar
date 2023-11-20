@@ -3,12 +3,19 @@ from icalendar import Calendar, Event as iCalEvent
 from datetime import datetime
 from dateutil.parser import parse, ParserError
 import pytz
+import uuid
 
 from table_to_events import Event
 
 
 def create_ics_file(events: list[Event], file_path: Path):
     cal = Calendar()
+
+    # attempted to make same event in one group by giving them the same uid
+    # but its not possible to write the repeat rule, so only the first event
+    # gets added with the code below.
+    # summaries = {event.summary for event in events}
+    # event_uid = {summary: uuid.uuid4() for summary in summaries}
 
     for event in events:
         # Create an iCalendar event
@@ -19,8 +26,9 @@ def create_ics_file(events: list[Event], file_path: Path):
         cal_event.add("dtstart", event.datetime_start)
         cal_event.add("dtend", event.datetime_end)
         cal_event.add("dtstamp", datetime.now(event.datetime_start.tzinfo))
-        # Timestamp should be in UTC
+        # Timestamp should be in UTC?
         cal_event.add("description", event.description)
+        # cal_event.add("uid", event_uid[event.summary]) # fails the test
 
         # Add event to the calendar
         cal.add_component(cal_event)

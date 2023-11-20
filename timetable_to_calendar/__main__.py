@@ -27,11 +27,13 @@ def docx_to_events(docx_path: Path) -> list[Event]:
 
     # lint_events
     events = merge_events(events)
+    events.sort(key=lambda x: x.datetime_start)
     return events
 
 
 def app(docx_path: Path, export_ics_path: Path):
     events = docx_to_events(docx_path)
+    events.sort(key=lambda x: x.datetime_start)
 
     # list[Event] to ics
     create_ics_file(events, export_ics_path)
@@ -72,6 +74,7 @@ if __name__ == "__main__":
             if duration == timedelta(hours=4):
                 count += 1
                 count_str += f",{count:02}"
+            print(f"daodm, on 20{yymmdd} {start}-{end}")
             # print(
             #     f"_{event.summary.lower()}-{count_str}-{yymmdd} , class given on 20{yymmdd} {event.datetime_start.strftime('%H%M')}-{event.datetime_end.strftime('%H%M')} by @"
             # )

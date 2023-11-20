@@ -30,6 +30,7 @@ def merge_events(events: list[Event]) -> list[Event]:
         full = group[0].description
 
         merged_events.append(Event(start, end, short, full))
+    merged_events.sort(key=lambda x: x.datetime_start)
     return merged_events
 
 
